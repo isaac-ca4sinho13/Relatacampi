@@ -22,6 +22,7 @@ export default function RegisterScreen({ navigation }) {
         onChangeText={setEmail}
         placeholder="Digite seu email"
         keyboardType="email-address"
+        placeholderTextColor="#777"
       />
 
       <Text style={styles.label}>Senha:</Text>
@@ -30,6 +31,7 @@ export default function RegisterScreen({ navigation }) {
         value={senha}
         onChangeText={setSenha}
         placeholder="Digite sua senha"
+        placeholderTextColor="#777"
         secureTextEntry
       />
 
@@ -39,6 +41,7 @@ export default function RegisterScreen({ navigation }) {
         value={nome}
         onChangeText={setNome}
         placeholder="Digite seu nome"
+        placeholderTextColor="#777"
       />
 
       <Text style={styles.label}>Turma:</Text>
@@ -47,15 +50,17 @@ export default function RegisterScreen({ navigation }) {
         value={turma}
         onChangeText={setTurma}
         placeholder="Digite sua turma"
+        placeholderTextColor="#777"
       />
 
       <TouchableOpacity style={styles.button} onPress={handleCadastro}>
         <Text style={styles.buttonText}>Cadastrar-se</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.link}>Já tem uma conta?{"\n"}<Text style={styles.linkBold}>Logar</Text></Text>
-      </TouchableOpacity>
+     <Text style={styles.footerText}>Já possui uma conta?</Text>
+           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+             <Text style={styles.link}>Logar</Text>
+           </TouchableOpacity>
     </View>
   );
 }
@@ -102,10 +107,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  footerText: {
+    marginTop: 2,
+    fontSize: 13,
+  },
   link: {
-    fontSize: 12,
-    textAlign: 'center',
+    fontSize: 13,
+    fontWeight: 'bold',
     color: '#000',
+    textDecorationLine: 'underline',
   },
   linkBold: {
     fontWeight: 'bold',
