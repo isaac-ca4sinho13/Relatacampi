@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -7,9 +8,49 @@ export default function RegisterScreen({ navigation }) {
   const [nome, setNome] = useState('');
   const [turma, setTurma] = useState('');
 
-  const handleCadastro = () => {
-    console.log({ email, senha, nome, turma });
+  const SalvarCadastro = async () => {
+  if (!email || !senha || !nome || !turma) {
+    Alert.alert('Atenção', 'Preencha todos os campos!');
+    return;
+  }
+
+  const NovoUsuario = {
+    email,
+    senha,
+    nome,
+    turma,
   };
+
+  try {
+    const UsuariosSalvos = await AsyncStorage.getItem('Usuarios');
+    const Usuarios = UsuariosSalvos ? JSON.parse(UsuariosSalvos) : [];
+
+    Usuarios.push(NovoUsuario);
+
+    await AsyncStorage.setItem('Usuarios', JSON.stringify(Usuarios));
+
+    const Resposta = await fetch('http://127.0.0.1:3001/usuarios', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(NovoUsuario),
+    });
+
+    if (!Resposta.ok) {
+      throw new Error('Erro ao salvar no servidor');
+    }
+
+    Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
+    setEmail('');
+    setSenha('');
+    setNome('');
+    setTurma('');
+  } catch (error) {
+    console.log(error);
+    Alert.alert('Erro', 'Não foi possível salvar o cadastro.');
+  }
+};
 
   return (
     <View style={styles.container}>
@@ -53,7 +94,7 @@ export default function RegisterScreen({ navigation }) {
         placeholderTextColor="#777"
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleCadastro}>
+      <TouchableOpacity style={styles.button} onPress={SalvarCadastro}>
         <Text style={styles.buttonText}>Cadastrar-se</Text>
       </TouchableOpacity>
 
