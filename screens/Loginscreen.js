@@ -1,7 +1,48 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Alert,
+} from 'react-native';
 
 export default function LoginScreen({ navigation }) {
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+
+  const realizarLogin = async () => {
+    if (!email || !senha) {
+      Alert.alert('Atenção', 'Preencha todos os campos!');
+      return;
+    }
+
+    try {
+      const resposta = await fetch(
+        `http://192.168.1.180:3001/usuarios?email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`
+      );
+
+      if (!resposta.ok) {
+        Alert.alert('Erro', 'Erro ao tentar logar. Verifique o servidor.');
+        return;
+      }
+
+      const usuarios = await resposta.json();
+
+      if (usuarios.length > 0) {
+        Alert.alert('Sucesso', 'Login realizado com sucesso!');
+        navigation.navigate('Testescreen');
+      } else {
+        Alert.alert('Erro', 'Email ou senha inválidos.');
+      }
+    } catch (error) {
+      console.error('Erro na conexão:', error);
+      Alert.alert('Erro', 'Não foi possível conectar ao servidor.');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Image
@@ -17,17 +58,26 @@ export default function LoginScreen({ navigation }) {
       />
 
       <Text style={styles.label}>Email:</Text>
-      <TextInput style={styles.input} placeholder="Digite seu email" placeholderTextColor="#777" />
+      <TextInput
+        style={styles.input}
+        value={email}
+        onChangeText={setEmail}
+        placeholder="Digite seu email"
+        placeholderTextColor="#777"
+        keyboardType="email-address"
+      />
 
       <Text style={styles.label}>Senha:</Text>
       <TextInput
         style={styles.input}
+        value={senha}
+        onChangeText={setSenha}
         placeholder="Digite sua senha"
         secureTextEntry
         placeholderTextColor="#777"
       />
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={realizarLogin}>
         <Text style={styles.buttonText}>Entrar</Text>
       </TouchableOpacity>
 
@@ -38,6 +88,7 @@ export default function LoginScreen({ navigation }) {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
