@@ -29,7 +29,7 @@ export default function RegisterScreen({ navigation }) {
 
     await AsyncStorage.setItem('Usuarios', JSON.stringify(Usuarios));
 
-    const Resposta = await fetch('http://127.0.0.1:3001/usuarios', {
+    const Resposta = await fetch('http://localhost:3000/usuarios', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

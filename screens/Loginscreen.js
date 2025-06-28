@@ -21,7 +21,7 @@ export default function LoginScreen({ navigation }) {
 
     try {
       const resposta = await fetch(
-        `http://192.168.1.180:3001/usuarios?email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`
+        `http://localhost:3000/usuarios?email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`
       );
 
       if (!resposta.ok) {
@@ -33,7 +33,7 @@ export default function LoginScreen({ navigation }) {
 
       if (usuarios.length > 0) {
         Alert.alert('Sucesso', 'Login realizado com sucesso!');
-        navigation.navigate('Testescreen');
+        navigation.navigate('Home ');
       } else {
         Alert.alert('Erro', 'Email ou senha inválidos.');
       }
