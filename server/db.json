@@ -6,6 +6,13 @@
       "senha": "1",
       "nome": "1",
       "turma": "1"
+    },
+    {
+      "id": "2e70",
+      "email": "teste@gmail.com",
+      "senha": "1234",
+      "nome": "teste1",
+      "turma": "b"
     }
   ]
 }

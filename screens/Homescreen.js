@@ -1,61 +1,99 @@
-import React from 'react';
-import { View, Text, TextInput, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  Image,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  SafeAreaView,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function HomeScreen() {
+  const [busca, setBusca] = useState('');
+
+  const dados = [
+    { id: 1, titulo: 'Escola', subtitulo: 'Paranormal' },
+    { id: 2, titulo: 'Escola', subtitulo: 'Tecnológica' },
+    { id: 3, titulo: 'Escola', subtitulo: 'Ambiental' },
+  ];
+
+  const filtrados = dados.filter(
+    (item) =>
+      item.titulo.toLowerCase().includes(busca.toLowerCase()) ||
+      item.subtitulo.toLowerCase().includes(busca.toLowerCase())
+  );
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
 
-      <View style={styles.header}>
-        <Image source={require('../assets/RelataCampi.png')} style={styles.logo} />
-        <Text style={styles.title}>RelataCampi</Text>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Image source={require('../assets/RelataCampi.png')} style={styles.logo} />
+          <Text style={styles.title}>RelataCampi</Text>
+        </View>
+
+
+        <View style={styles.searchBar}>
+          <Ionicons name="search" size={20} color="#002933" style={styles.searchIcon} />
+          <TextInput
+            placeholder="Pesquisar"
+            placeholderTextColor="#444"
+            style={styles.searchInput}
+            value={busca}
+            onChangeText={setBusca}
+          />
+          <Ionicons name="grid-outline" size={20} color="#002933" style={styles.gridIcon} />
+        </View>
+
+
+        <View style={styles.scrollContainer}>
+          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            {filtrados.map((item) => (
+              <View key={item.id} style={styles.card}>
+                <Text style={styles.cardTitle}>{item.titulo}</Text>
+                <Image source={require('../assets/exemplo-de-noticia.png')} style={styles.cardImage} />
+                <Text style={styles.cardSubtitle}>{item.subtitulo}</Text>
+                <Text style={styles.seta}>≫</Text>
+              </View>
+            ))}
+          </ScrollView>
+        </View>
+
+
+        <View style={styles.navBar}>
+          <TouchableOpacity style={styles.navButton}>
+            <Ionicons name="home" size={26} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navButton}>
+            <Ionicons name="chatbubble-ellipses-outline" size={26} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navButton}>
+            <Ionicons name="settings" size={26} color="#fff" />
+          </TouchableOpacity>
+        </View>
       </View>
-
-      <View style={styles.header}>
-        <Image source={require('../assets/RelataCampi.png')} style={styles.logo} />
-        <Text>"Usuario"</Text>
-      </View>
-
-
-      <View style={styles.searchBar}>
-        <Ionicons name="search" size={20} color="#002933" style={{ marginRight: 8 }} />
-        <TextInput placeholder="Pesquisar" placeholderTextColor="#444" style={styles.searchInput} />
-        <Ionicons name="grid-outline" size={20} color="#002933" style={{ marginLeft: 8 }} />
-      </View>
-
- 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {Array.from({ length: 5 }).map((_, index) => (
-          <View key={index} style={styles.card}>
-            <Text style={styles.cardTitle}>Escola</Text>
-            <Image source={require('../assets/exemplo-de-noticia.png')} style={styles.cardImage} />
-            <Text style={styles.cardSubtitle}>Paranormal</Text>
-            <Text style={styles.seta}>&gt;&gt;</Text>
-          </View>
-        ))}
-      </ScrollView>
-
-      <View style={styles.navBar}>
-        <Ionicons name="home" size={26} color="#002933" />
-        <Ionicons name="chatbubble-outline" size={26} color="#002933" />
-        <Ionicons name="settings-outline" size={26} color="#002933" />
-      </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#EADDC8',
+  },
+  container: {
+    flex: 1,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#EADDC8',
     paddingHorizontal: 15,
-    paddingTop: 50,
+    paddingTop: 15,
     paddingBottom: 10,
+    backgroundColor: '#EADDC8',
   },
   logo: {
     width: 40,
@@ -63,28 +101,39 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   title: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     fontFamily: 'serif',
     color: '#000',
   },
   searchBar: {
-    backgroundColor: '#E3B86B',
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 10,
+    backgroundColor: '#E3B86B',
+    marginHorizontal: 15,
     borderRadius: 25,
     paddingHorizontal: 15,
     height: 40,
     marginBottom: 10,
   },
+  searchIcon: {
+    marginRight: 8,
+  },
+  gridIcon: {
+    marginLeft: 8,
+  },
   searchInput: {
     flex: 1,
     color: '#000',
   },
+  scrollContainer: {
+    flex: 1,
+    marginBottom: 60,
+    height: 300,
+  },
   scrollContent: {
     paddingHorizontal: 15,
-    paddingBottom: 80,
+    height: 300,
   },
   card: {
     backgroundColor: '#CFCFC4',
@@ -117,13 +166,15 @@ const styles = StyleSheet.create({
   navBar: {
     position: 'absolute',
     bottom: 0,
+    left: 0,
+    right: 0,
     height: 60,
-    width: '100%',
-    backgroundColor: '#EADDC8',
+    backgroundColor: '#002933',
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    borderTopWidth: 1,
-    borderColor: '#aaa',
+  },
+  navButton: {
+    padding: 10,
   },
 });

@@ -33,7 +33,7 @@ export default function LoginScreen({ navigation }) {
 
       if (usuarios.length > 0) {
         Alert.alert('Sucesso', 'Login realizado com sucesso!');
-        navigation.navigate('Home ');
+        navigation.navigate('Home');
       } else {
         Alert.alert('Erro', 'Email ou senha inválidos.');
       }
