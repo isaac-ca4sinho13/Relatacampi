@@ -1,6 +1,13 @@
 {
   "usuarios": [
     {
+      "id": "3f6b",
+      "email": "NilsonCandido@gmail.com",
+      "senha": "159753",
+      "nome": "Nilson ADM",
+      "turma": "ADS"
+    },
+    {
       "id": "b582",
       "email": "g@gmail.com",
       "senha": "1",
@@ -8,11 +15,11 @@
       "turma": "1"
     },
     {
-      "id": "2e70",
-      "email": "teste@gmail.com",
-      "senha": "1234",
-      "nome": "teste1",
-      "turma": "b"
+      "id": "e13e",
+      "email": "v@v",
+      "senha": "12",
+      "nome": "Victor Hugo",
+      "turma": "3B"
     }
   ]
 }
