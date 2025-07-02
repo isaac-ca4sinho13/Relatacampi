@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,15 +10,34 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen() {
   const [busca, setBusca] = useState('');
+  const [usuario, setUsuario] = useState(null);
 
   const dados = [
     { id: 1, titulo: 'Escola', subtitulo: 'Paranormal' },
     { id: 2, titulo: 'Escola', subtitulo: 'Tecnológica' },
     { id: 3, titulo: 'Escola', subtitulo: 'Ambiental' },
   ];
+
+
+  useEffect(() => {
+    const carregarUsuario = async () => {
+      try {
+        const userString = await AsyncStorage.getItem('usuarioLogado');
+        if (userString) {
+          const userObj = JSON.parse(userString);
+          setUsuario(userObj);
+        }
+      } catch (error) {
+        console.log('Erro ao carregar usuário:', error);
+      }
+    };
+
+    carregarUsuario();
+  }, []);
 
   const filtrados = dados.filter(
     (item) =>
@@ -28,13 +47,14 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-
       <View style={styles.container}>
         <View style={styles.header}>
           <Image source={require('../assets/RelataCampi.png')} style={styles.logo} />
-          <Text style={styles.title}>RelataCampi</Text>
+          <View>
+            <Text style={styles.title}>RelataCampi</Text>
+            {usuario && <Text style={styles.userInfo}>Olá, {usuario.nome}</Text>}
+          </View>
         </View>
-
 
         <View style={styles.searchBar}>
           <Ionicons name="search" size={20} color="#002933" style={styles.searchIcon} />
@@ -48,7 +68,6 @@ export default function HomeScreen() {
           <Ionicons name="grid-outline" size={20} color="#002933" style={styles.gridIcon} />
         </View>
 
-
         <View style={styles.scrollContainer}>
           <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
             {filtrados.map((item) => (
@@ -61,7 +80,6 @@ export default function HomeScreen() {
             ))}
           </ScrollView>
         </View>
-
 
         <View style={styles.navBar}>
           <TouchableOpacity style={styles.navButton}>
@@ -105,6 +123,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily: 'serif',
     color: '#000',
+  },
+  userInfo: {
+    fontSize: 14,
+    color: '#444',
   },
   searchBar: {
     flexDirection: 'row',
