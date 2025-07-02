@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
 import {
   View,
@@ -20,25 +21,32 @@ export default function LoginScreen({ navigation }) {
     }
 
     try {
-      const resposta = await fetch(
-        `http://localhost:3000/usuarios?email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`
-      );
+      const resposta = await fetch(`http://localhost:3001/usuarios?email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`);
 
       if (!resposta.ok) {
         Alert.alert('Erro', 'Erro ao tentar logar. Verifique o servidor.');
         return;
       }
 
-      const usuarios = await resposta.json();
+    const usuarios = await resposta.json();
 
-      if (usuarios.length > 0) {
-        Alert.alert('Sucesso', 'Login realizado com sucesso!');
-        navigation.navigate('Home');
-      } else {
-        Alert.alert('Erro', 'Email ou senha inválidos.');
-      }
+    if (usuarios.length > 0) {
+      const usuario = usuarios[0];
+
+      await AsyncStorage.setItem('usuarioLogado', JSON.stringify(usuario)); 
+      Alert.alert('Sucesso', 'Login realizado com sucesso!'); 
+
+    if (usuario.email === 'NilsonCandido@gmail.com') {
+      navigation.navigate('RegistroNoticiascreen');
+    } else {
+      navigation.navigate('Home');
+    }
+  } else {
+    Alert.alert('Erro', 'Email ou senha incorretos.');
+  }
+
+
     } catch (error) {
-      console.error('Erro na conexão:', error);
       Alert.alert('Erro', 'Não foi possível conectar ao servidor.');
     }
   };
