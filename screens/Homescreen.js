@@ -95,13 +95,13 @@ export default function HomeScreen() {
         </ScrollView>
 
         <View style={styles.navBar}>
-          <TouchableOpacity style={styles.navButton}>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Home')} >
             <Ionicons name="home" size={26} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.navButton}>
             <Ionicons name="chatbubble-ellipses-outline" size={26} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Configurar')}>
             <Ionicons name="settings" size={26} color="#fff" />
           </TouchableOpacity>
         </View>

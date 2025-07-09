@@ -16,7 +16,8 @@ export default function LoginScreen({ navigation }) {
 
   const realizarLogin = async () => {
     if (!email || !senha) {
-      Alert.alert('Atenção', 'Preencha todos os campos!');
+      Alert.alert('Atenção, Preencha todos os campos!');
+      alert('Atenção, Preencha todos os campos!');
       return;
     }
 
@@ -39,15 +40,17 @@ export default function LoginScreen({ navigation }) {
     if (usuario.email === 'NilsonCandido@gmail.com') {
       navigation.navigate('RegistroNoticiascreen');
     } else {
-      navigation.navigate('Home');
+      navigation.navigate('HomeADM');
     }
   } else {
-    Alert.alert('Erro', 'Email ou senha incorretos.');
+    Alert.alert('Erro, Email ou senha incorretos.');
+    alert('Erro, Email ou senha incorretos.');
   }
 
 
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível conectar ao servidor.');
+      Alert.alert('Erro, Não foi possível conectar ao servidor.');
+      alert('Erro, Não foi possível conectar ao servidor.');
     }
   };
 

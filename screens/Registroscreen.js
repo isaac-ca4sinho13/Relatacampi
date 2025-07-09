@@ -10,7 +10,8 @@ export default function RegisterScreen({ navigation }) {
 
   const SalvarCadastro = async () => {
   if (!email || !senha || !nome || !turma) {
-    Alert.alert('Atenção', 'Preencha todos os campos!');
+    Alert.alert('Atenção, Preencha todos os campos!');
+    alert('Atenção, Preencha todos os campos!');
     return;
   }
 
@@ -29,7 +30,7 @@ export default function RegisterScreen({ navigation }) {
 
     await AsyncStorage.setItem('Usuarios', JSON.stringify(Usuarios));
 
-    const Resposta = await fetch('http://localhost:3000/usuarios', {
+    const Resposta = await fetch('http://localhost:3001/usuarios', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -41,7 +42,8 @@ export default function RegisterScreen({ navigation }) {
       throw new Error('Erro ao salvar no servidor');
     }
 
-    Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
+    Alert.alert('Cadastro realizado com sucesso!');
+    alert('Cadastro realizado com sucesso!');
     setEmail('');
     setSenha('');
     setNome('');
