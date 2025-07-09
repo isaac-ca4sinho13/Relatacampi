@@ -15,13 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function HomeScreen() {
   const [busca, setBusca] = useState('');
   const [usuario, setUsuario] = useState(null);
-
-  const dados = [
-    { id: 1, titulo: 'Escola', subtitulo: 'Paranormal' },
-    { id: 2, titulo: 'Escola', subtitulo: 'Tecnológica' },
-    { id: 3, titulo: 'Escola', subtitulo: 'Ambiental' },
-  ];
-
+  const [noticias, setNoticias] = useState([]);
 
   useEffect(() => {
     const carregarUsuario = async () => {
@@ -36,13 +30,25 @@ export default function HomeScreen() {
       }
     };
 
+    const carregarNoticias = async () => {
+      try {
+        const stored = await AsyncStorage.getItem('noticias');
+        if (stored) {
+          setNoticias(JSON.parse(stored));
+        }
+      } catch (error) {
+        console.log('Erro ao carregar notícias:', error);
+      }
+    };
+
     carregarUsuario();
+    carregarNoticias();
   }, []);
 
-  const filtrados = dados.filter(
+  const filtradas = noticias.filter(
     (item) =>
       item.titulo.toLowerCase().includes(busca.toLowerCase()) ||
-      item.subtitulo.toLowerCase().includes(busca.toLowerCase())
+      item.texto.toLowerCase().includes(busca.toLowerCase())
   );
 
   return (
@@ -68,18 +74,25 @@ export default function HomeScreen() {
           <Ionicons name="grid-outline" size={20} color="#002933" style={styles.gridIcon} />
         </View>
 
-        <View style={styles.scrollContainer}>
-          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-            {filtrados.map((item) => (
-              <View key={item.id} style={styles.card}>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          {filtradas.length === 0 ? (
+            <Text style={{ textAlign: 'center', color: '#333', marginTop: 20 }}>
+              Nenhuma notícia encontrada.
+            </Text>
+          ) : (
+            filtradas.map((item, index) => (
+              <View key={index} style={styles.card}>
                 <Text style={styles.cardTitle}>{item.titulo}</Text>
-                <Image source={require('../assets/exemplo-de-noticia.png')} style={styles.cardImage} />
-                <Text style={styles.cardSubtitle}>{item.subtitulo}</Text>
-                <Text style={styles.seta}>≫</Text>
+
+                {item.imagem && (
+                  <Image source={{ uri: item.imagem }} style={styles.cardImage} />
+                )}
+
+                <Text style={styles.cardSubtitle}>{item.texto}</Text>
               </View>
-            ))}
-          </ScrollView>
-        </View>
+            ))
+          )}
+        </ScrollView>
 
         <View style={styles.navBar}>
           <TouchableOpacity style={styles.navButton}>
@@ -148,42 +161,34 @@ const styles = StyleSheet.create({
     flex: 1,
     color: '#000',
   },
-  scrollContainer: {
-    flex: 1,
-    marginBottom: 60,
-    height: 300,
-  },
   scrollContent: {
     paddingHorizontal: 15,
-    height: 300,
+    paddingBottom: 80,
   },
   card: {
     backgroundColor: '#CFCFC4',
     borderRadius: 10,
     marginBottom: 20,
-    padding: 10,
+    padding: 15,
     alignItems: 'center',
   },
   cardTitle: {
     fontSize: 22,
     color: '#002933',
     fontWeight: 'bold',
+    marginBottom: 10,
   },
   cardImage: {
-    width: 150,
-    height: 100,
-    marginVertical: 10,
+    width: '100%',
+    height: 180,
+    borderRadius: 10,
     resizeMode: 'cover',
+    marginBottom: 10,
   },
   cardSubtitle: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#002933',
-  },
-  seta: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#002933',
-    marginTop: 5,
+    textAlign: 'justify',
   },
   navBar: {
     position: 'absolute',
