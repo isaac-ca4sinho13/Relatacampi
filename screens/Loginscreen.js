@@ -37,10 +37,10 @@ export default function LoginScreen({ navigation }) {
       await AsyncStorage.setItem('usuarioLogado', JSON.stringify(usuario)); 
       Alert.alert('Sucesso', 'Login realizado com sucesso!'); 
 
-    if (usuario.email === 'NilsonCandido@gmail.com') {
-      navigation.navigate('RegistroNoticiascreen');
-    } else {
+    if (usuario.email == 'NilsonCandido@gmail.com') {
       navigation.navigate('HomeADM');
+    } else {
+      navigation.navigate('Home');
     }
   } else {
     Alert.alert('Erro, Email ou senha incorretos.');

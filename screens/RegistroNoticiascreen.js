@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,10 +8,27 @@ import {
   Alert,
   Image,
 } from 'react-native';
+import { Ionicons, Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function CadastroNoticiaScreen() {
+export default function CadastroNoticiaScreen({navigation}) {
+
+   const [usuario, setUsuario] = useState(null);
+  
+    useEffect(() => {
+      const verificarUsuario = async () => {
+        const userString = await AsyncStorage.getItem('usuarioLogado');
+        if (!userString) {
+          Alert.alert('Sessão expirada', 'Por favor, faça login novamente.');
+          navigation.replace('Registro');
+        } else {
+          setUsuario(JSON.parse(userString));
+        }
+      };
+      verificarUsuario();
+    }, []);
+
   const [titulo, setTitulo] = useState('');
   const [imagem, setImagem] = useState(null);
   const [texto, setTexto] = useState('');
@@ -26,7 +43,7 @@ export default function CadastroNoticiaScreen() {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 1,
-      base64: true, // aqui transforma em base64
+      base64: true, 
     });
 
     if (!result.canceled) {
@@ -43,7 +60,7 @@ export default function CadastroNoticiaScreen() {
 
     const novaNoticia = {
       titulo,
-      imagem, // já está como base64
+      imagem,
       texto,
     };
 
@@ -111,6 +128,11 @@ export default function CadastroNoticiaScreen() {
         <TouchableOpacity style={styles.button} onPress={publicar}>
           <Text style={styles.buttonText}>Publicar</Text>
         </TouchableOpacity>
+
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('HomeADM')}>
+            <Ionicons name="home" size={26} color="#fff" onPress={() => navigation.navigate('HomeADM')}/>
+          </TouchableOpacity>
+
       </View>
     </View>
   );

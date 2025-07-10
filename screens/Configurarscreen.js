@@ -1,15 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   Image,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function ConfiguracoesScreen() {
+export default function ConfiguracoesScreen({ navigation }) {
+  const [usuario, setUsuario] = useState(null);
+
+  useEffect(() => {
+    const verificarUsuario = async () => {
+      const userString = await AsyncStorage.getItem('usuarioLogado');
+      if (!userString) {
+        Alert.alert('Sessão expirada', 'Por favor, faça login novamente.');
+        navigation.replace('Login');
+      } else {
+        setUsuario(JSON.parse(userString));
+      }
+    };
+    verificarUsuario();
+  }, []);
+
   return (
+
     <View style={styles.container}>
 
       <View style={styles.header}>
@@ -21,7 +39,7 @@ export default function ConfiguracoesScreen() {
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
           <Text style={styles.label}>TURMA:</Text>
-          <Text style={styles.value}>B</Text>
+          {usuario && <Text style={styles.value}>{usuario.turma}</Text>}
           <TouchableOpacity style={styles.button}>
             <Text style={styles.buttonText}>alterar turma</Text>
           </TouchableOpacity>
@@ -29,7 +47,7 @@ export default function ConfiguracoesScreen() {
 
         <View style={styles.infoRow}>
           <Text style={styles.label}>E-mail:</Text>
-          <Text style={styles.value}>teste@gmail.com</Text>
+          {usuario && <Text style={styles.value}>{usuario.email}</Text>}
           <TouchableOpacity style={styles.button}>
             <Text style={styles.buttonText}>alterar e-mail</Text>
           </TouchableOpacity>
@@ -37,7 +55,7 @@ export default function ConfiguracoesScreen() {
 
         <View style={styles.infoRow}>
           <Text style={styles.label}>Nome :</Text>
-          <Text style={styles.value}>teste</Text>
+          {usuario && <Text style={styles.value}>{usuario.nome}</Text>}
           <TouchableOpacity style={styles.button}>
             <Text style={styles.buttonText}>alterar nome</Text>
           </TouchableOpacity>
@@ -45,16 +63,18 @@ export default function ConfiguracoesScreen() {
 
         <View style={styles.infoRow}>
           <Text style={styles.label}>Senha :</Text>
-          <Text style={styles.value}>•••••••</Text>
+          {usuario && <Text style={styles.value}>{usuario.senha}</Text>}
           <TouchableOpacity style={styles.button}>
             <Text style={styles.buttonText}>alterar senha</Text>
           </TouchableOpacity>
         </View>
       </View>
 
-
+      
       <View style={styles.navBar}>
-        <Ionicons name="home" size={26} color="#fff" />
+        <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Home')}>
+        <Ionicons name="home" size={26} color="#fff" onPress={() => navigation.navigate('Home')} />
+      </TouchableOpacity>
         <Ionicons name="chatbubble-ellipses-outline" size={26} color="#fff" />
         <Ionicons name="settings" size={26} color="#fff" />
       </View>

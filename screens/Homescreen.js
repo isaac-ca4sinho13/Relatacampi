@@ -12,7 +12,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const [busca, setBusca] = useState('');
   const [usuario, setUsuario] = useState(null);
   const [noticias, setNoticias] = useState([]);
@@ -102,7 +102,7 @@ export default function HomeScreen() {
             <Ionicons name="chatbubble-ellipses-outline" size={26} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Configurar')}>
-            <Ionicons name="settings" size={26} color="#fff" />
+            <Ionicons name="settings" size={26} color="#fff" onPress={() => navigation.navigate('Configurar')}/>
           </TouchableOpacity>
         </View>
       </View>

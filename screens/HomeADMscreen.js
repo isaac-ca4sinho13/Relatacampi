@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,8 +9,26 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Ionicons, Feather } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function HomeADMscreen() {
+export default function HomeADMscreen({navigation}) {
+
+ const [usuario, setUsuario] = useState(null);
+
+  useEffect(() => {
+    const verificarUsuario = async () => {
+      const userString = await AsyncStorage.getItem('usuarioLogado');
+      if (!userString) {
+        Alert.alert('Sessão expirada', 'Por favor, faça login novamente.');
+        navigation.replace('Login');
+      } else {
+        setUsuario(JSON.parse(userString));
+      }
+    };
+    verificarUsuario();
+  }, []);
+
+
   const [busca, setBusca] = useState('');
 
   const usuarios = [
@@ -63,7 +81,7 @@ export default function HomeADMscreen() {
 
       <View style={styles.navBar}>
               <TouchableOpacity onPress={() => navigation.navigate('RegistroNoticiascreen')}>
-            <Ionicons name="newspaper" size={26} color="#fff" />
+            <Ionicons name="newspaper" size={26} color="#fff"  onPress={() => navigation.navigate('RegistroNoticiascreen')} />
               </TouchableOpacity>
         <Ionicons name="chatbubble-ellipses-outline" size={26} color="#fff" />
         <Ionicons name="settings" size={26} color="#fff" />
