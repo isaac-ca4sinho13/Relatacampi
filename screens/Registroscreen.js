@@ -48,6 +48,7 @@ export default function RegisterScreen({ navigation }) {
     setSenha('');
     setNome('');
     setTurma('');
+    navigation.navigate('Login')
   } catch (error) {
     console.log(error);
     Alert.alert('Erro', 'Não foi possível salvar o cadastro.');

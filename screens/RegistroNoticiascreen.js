@@ -72,7 +72,7 @@ export default function CadastroNoticiaScreen({navigation}) {
 
       await AsyncStorage.setItem('noticias', JSON.stringify(noticias));
 
-      await fetch('http://localhost:3001/usuarios', {
+      await fetch('http://localhost:3001/noticias', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

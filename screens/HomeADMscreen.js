@@ -12,37 +12,29 @@ import { Ionicons, Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeADMscreen({navigation}) {
-
- const [usuario, setUsuario] = useState(null);
+  const [busca, setBusca] = useState('');
+  const [items, setItems] = useState([]);
+  const [noticias, setNoticias] = useState([]);
 
   useEffect(() => {
-    const verificarUsuario = async () => {
-      const userString = await AsyncStorage.getItem('usuarioLogado');
-      if (!userString) {
-        Alert.alert('Sessão expirada', 'Por favor, faça login novamente.');
-        navigation.replace('Login');
-      } else {
-        setUsuario(JSON.parse(userString));
+    const carregarNoticias = async () => {
+      try {
+        const stored = await AsyncStorage.getItem('noticias');
+        if (stored) {
+          setNoticias(JSON.parse(stored));
+        }
+      } catch (error) {
+        console.log('Erro ao carregar notícias:', error);
       }
     };
-    verificarUsuario();
+
+    carregarNoticias();
   }, []);
 
-
-  const [busca, setBusca] = useState('');
-
-  const usuarios = [
-    { id: 1, nome: 'Usuário 1' },
-    { id: 2, nome: 'Usuário 2' },
-    { id: 3, nome: 'Usuário 3' },
-    { id: 4, nome: 'Usuário 4' },
-    { id: 5, nome: 'Usuário 5' },
-    { id: 6, nome: 'Usuário 6' },
-    { id: 7, nome: 'Usuário 7' },
-  ];
-
-  const filtrados = usuarios.filter((u) =>
-    u.nome.toLowerCase().includes(busca.toLowerCase())
+  const filtradas = noticias.filter(
+    (item) =>
+      item.titulo.toLowerCase().includes(busca.toLowerCase()) ||
+      item.texto.toLowerCase().includes(busca.toLowerCase())
   );
 
   return (
@@ -68,15 +60,28 @@ export default function HomeADMscreen({navigation}) {
       </View>
 
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {filtrados.map((usuario) => (
-          <TouchableOpacity key={usuario.id} style={styles.userItem}>
-            <Ionicons name="person-circle-outline" size={40} color="#000" />
-            <Text style={styles.userText}>{usuario.nome}</Text>
-            <Ionicons name="arrow-forward-circle" size={30} color="#FFD700" />
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+                {filtradas.length === 0 ? (
+                  <Text style={{ textAlign: 'center', color: '#333', marginTop: 20 }}>
+                    Nenhuma notícia encontrada.
+                  </Text>
+                ) : (
+                  filtradas.map((item, index) => (
+                    <View key={index} style={styles.card}>
+                      <Text style={styles.cardTitle}>{item.titulo}</Text>
+      
+                      {item.imagem && (
+                        <Image source={{ uri: item.imagem }} style={styles.cardImage} />
+                      )}
+      
+                      <Text style={styles.cardSubtitle}>{item.texto}</Text>
+                    </View>
+                  
+                  ))
+                  
+                )}
+                
+              </ScrollView>
 
 
       <View style={styles.navBar}>
