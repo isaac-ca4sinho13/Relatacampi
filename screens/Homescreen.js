@@ -129,7 +129,7 @@ export default function HomeScreen({ navigation }) {
           <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Home')}>
             <Ionicons name="home" size={26} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}>
+          <TouchableOpacity style={styles.navButton}  onPress={() => navigation.navigate('Testescreen')}>
             <Ionicons name="chatbubble-ellipses-outline" size={26} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Configurar')}>
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   cardImage: {
-    width: '100%',
+    width: '90%',
     height: 180,
     borderRadius: 10,
     resizeMode: 'cover',

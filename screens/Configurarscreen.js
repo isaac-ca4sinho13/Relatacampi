@@ -42,7 +42,7 @@ export default function ConfiguracoesScreen({ navigation }) {
     if (!novoValor.trim()) return Alert.alert('Erro', 'Campo não pode ser vazio.');
 
     try {
-      const { data } = await axios.patch(http://localhost:3001/usuarios/${usuario.id}, {
+      const { data } = await axios.patch(`http://localhost:3001/usuarios/${usuario.id}`, {
         [campo]: novoValor,
       });
 
@@ -50,7 +50,7 @@ export default function ConfiguracoesScreen({ navigation }) {
       await AsyncStorage.setItem('usuarioLogado', JSON.stringify(atualizado));
       setUsuario(atualizado);
       setModalVisible(false);
-      Alert.alert('Sucesso', ${campo} atualizado com sucesso.);
+      Alert.alert(`Sucesso, ${campo} atualizado com sucesso.`);
     } catch (error) {
       Alert.alert('Erro ao atualizar', error.message);
     }
@@ -84,7 +84,7 @@ export default function ConfiguracoesScreen({ navigation }) {
               value={novoValor}
               onChangeText={setNovoValor}
               secureTextEntry={campo === 'senha'}
-              placeholder={Novo ${campo}}
+              placeholder={`Novo ${campo}`}
               placeholderTextColor="#666"
             />
             <TouchableOpacity style={styles.modalButton} onPress={salvarAlteracao}>

@@ -5,11 +5,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Registroscreen from './screens/Registroscreen';
 import Loginscreen from './screens/Loginscreen';
-import Testescreen from './screens/Testescreen';
 import Homescreen from './screens/Homescreen';
 import RegistroNoticiascreen from './screens/RegistroNoticiascreen';
 import Configurar from './screens/Configurarscreen'; 
 import HomeADM from './screens/HomeADMscreen'; 
+import Testescreen from './screens/Testescreen'; 
 
 const Stack = createStackNavigator();
 

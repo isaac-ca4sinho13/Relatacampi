@@ -84,6 +84,7 @@ export default function CadastroNoticiaScreen({navigation}) {
       setTitulo('');
       setImagem(null);
       setTexto('');
+      navigation.navigate('HomeADM');
     } catch (error) {
       Alert.alert('Erro', 'Falha ao publicar notícia.');
       console.error(error);
