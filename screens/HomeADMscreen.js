@@ -7,45 +7,71 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function HomeADMscreen({navigation}) {
+export default function HomeADMscreen({ navigation }) {
   const [busca, setBusca] = useState('');
-  const [items, setItems] = useState([]);
   const [noticias, setNoticias] = useState([]);
 
   useEffect(() => {
-    const carregarNoticias = async () => {
-      try {
-        const stored = await AsyncStorage.getItem('noticias');
-        if (stored) {
-          setNoticias(JSON.parse(stored));
-        }
-      } catch (error) {
-        console.log('Erro ao carregar notícias:', error);
-      }
-    };
+    const unsubscribe = navigation.addListener('focus', () => {
+      carregarNoticias();
+    });
 
     carregarNoticias();
-  }, []);
+
+    return unsubscribe;
+  }, [navigation]);
+
+  const carregarNoticias = async () => {
+    try {
+      const stored = await AsyncStorage.getItem('noticias');
+      if (stored) {
+        setNoticias(JSON.parse(stored));
+      }
+    } catch (error) {
+      console.log('Erro ao carregar notícias:', error);
+    }
+  };
+
+  const deleteNoticia = async (idParaDeletar) => {
+  const confirmar = window.confirm('Tem certeza que deseja deletar esta notícia?');
+  if (!confirmar) return;
+
+  try {
+    console.log('ID para deletar:', idParaDeletar);
+    console.log('Antes:', noticias);
+
+    const novasNoticias = noticias.filter(n => String(n.id) !== String(idParaDeletar));
+
+    console.log('Depois:', novasNoticias);
+
+    await AsyncStorage.setItem('noticias', JSON.stringify(novasNoticias));
+    setNoticias(novasNoticias);
+  } catch (error) {
+    console.log('Erro ao deletar notícia:', error);
+  }
+};
+
+
+
 
   const filtradas = noticias.filter(
-    (item) =>
-      item.titulo.toLowerCase().includes(busca.toLowerCase()) ||
-      item.texto.toLowerCase().includes(busca.toLowerCase())
+    item =>
+      item.titulo?.toLowerCase().includes(busca.toLowerCase()) ||
+      item.texto?.toLowerCase().includes(busca.toLowerCase())
   );
 
   return (
     <View style={styles.container}>
-      
       <View style={styles.header}>
         <Image source={require('../assets/RelataCampi.png')} style={styles.logo} />
         <Text style={styles.title}>RelataCampi</Text>
         <Feather name="settings" size={26} color="#002933" />
       </View>
-
 
       <View style={styles.searchBar}>
         <Ionicons name="search" size={20} color="#002933" style={{ marginRight: 8 }} />
@@ -59,41 +85,42 @@ export default function HomeADMscreen({navigation}) {
         <Ionicons name="grid-outline" size={20} color="#002933" style={{ marginLeft: 8 }} />
       </View>
 
-
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                {filtradas.length === 0 ? (
-                  <Text style={{ textAlign: 'center', color: '#333', marginTop: 20 }}>
-                    Nenhuma notícia encontrada.
-                  </Text>
-                ) : (
-                  filtradas.map((item, index) => (
-                    <View key={index} style={styles.card}>
-                      <Text style={styles.cardTitle}>{item.titulo}</Text>
-      
-                      {item.imagem && (
-                        <Image source={{ uri: item.imagem }} style={styles.cardImage} />
-                      )}
-      
-                      <Text style={styles.cardSubtitle}>{item.texto}</Text>
-                    </View>
-                  
-                  ))
-                  
-                )}
-                
-              </ScrollView>
+        {filtradas.length === 0 ? (
+          <Text style={{ textAlign: 'center', color: '#333', marginTop: 20 }}>
+            Nenhuma notícia encontrada.
+          </Text>
+        ) : (
+          filtradas.map(item => (
+            <View key={item.id} style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Text style={styles.cardTitle}>{item.titulo}</Text>
+                <TouchableOpacity onPress={() => deleteNoticia(item.id)}>
+                  <Feather name="trash-2" size={20} color="#a00" />
+                </TouchableOpacity>
+              </View>
 
+              {item.imagem && (
+                <Image source={{ uri: item.imagem }} style={styles.cardImage} />
+              )}
+
+              <Text style={styles.cardSubtitle}>{item.texto}</Text>
+            </View>
+          ))
+        )}
+      </ScrollView>
 
       <View style={styles.navBar}>
-              <TouchableOpacity onPress={() => navigation.navigate('RegistroNoticiascreen')}>
-            <Ionicons name="newspaper" size={26} color="#fff"  onPress={() => navigation.navigate('RegistroNoticiascreen')} />
-              </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('RegistroNoticiascreen')}>
+          <Ionicons name="newspaper" size={26} color="#fff" />
+        </TouchableOpacity>
         <Ionicons name="chatbubble-ellipses-outline" size={26} color="#fff" />
         <Ionicons name="settings" size={26} color="#fff" />
       </View>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -134,22 +161,39 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 15,
-    height: 300,
+    paddingBottom: 80,
   },
-  userItem: {
-    backgroundColor: '#CFCFC4',
+  card: {
+    backgroundColor: '#fff',
     borderRadius: 15,
-    padding: 10,
-    marginBottom: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    padding: 15,
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  userText: {
-    flex: 1,
-    marginLeft: 10,
-    fontSize: 16,
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
     color: '#002933',
+  },
+  cardImage: {
+    width: '100%',
+    height: 150,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  cardSubtitle: {
+    fontSize: 14,
+    color: '#444',
   },
   navBar: {
     position: 'absolute',
