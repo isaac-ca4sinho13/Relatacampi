@@ -1,78 +1,40 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { useRoute } from "@react-navigation/native";
+import { GiftedChat } from 'react-native-gifted-chat';
+import { useCallback, useEffect, useState } from "react";
+import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
+import { database } from "../config/firebase";
 
-export default function RegisterScreen({ navigation }) {
+export default function Chat() {
+  const [messages, setMessages] = useState([]);
+  const route = useRoute();
+  const { name = "Usuário" } = route.params || {};
 
+  useEffect(() => {
+    const q = query(collection(database, 'chats'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, snapshot => {
+      setMessages(snapshot.docs.map(doc => ({
+        _id: doc.data()._id,
+        createdAt: doc.data().createdAt.toDate(),
+        text: doc.data().text,
+        user: doc.data().user,
+      })));
+    });
+    return unsubscribe;
+  }, []);
+
+  const mensagemEnviada = useCallback((messages = []) => {
+    setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
+    const { _id, createdAt, text, user } = messages[0];
+    addDoc(collection(database, "chats"), {
+      _id, createdAt, text, user,
+    });
+  }, []);
 
   return (
-    <View style={styles.container}>
-      <Image source={require('../assets/RelataCampi.png')} style={styles.logo} />
-      
-      
-
-   
-
-      <Text style={styles.label}>PARABÈNS DESENVOLVEDOR *emoji de carinha festejante*</Text>
-      
-
-    
-
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.link}>Já tem uma conta?{"\n"}<Text style={styles.linkBold}>Logar</Text></Text>
-      </TouchableOpacity>
-    </View>
+    <GiftedChat
+      messages={messages}
+      onSend={mensagemEnviada}
+      user={{ _id: name }}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#e8d8c5',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  logo: {
-    width: 110,
-    height: 110,
-    marginBottom: 30,
-    resizeMode: 'contain',
-  },
-  label: {
-    alignSelf: 'flex-start',
-    marginLeft: 10,
-    fontWeight: 'bold',
-    fontSize: 18,
-    color: '#002333',
-  },
-  input: {
-    width: '100%',
-    backgroundColor: '#d4d4ca',
-    borderRadius: 25,
-    padding: 10,
-    marginBottom: 15,
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: '#1c1c1c',
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRadius: 25,
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  link: {
-    fontSize: 12,
-    textAlign: 'center',
-    color: '#000',
-  },
-  linkBold: {
-    fontWeight: 'bold',
-    color: '#000',
-  }
-});
