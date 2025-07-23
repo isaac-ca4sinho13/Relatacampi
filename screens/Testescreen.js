@@ -12,21 +12,33 @@ export default function Chat() {
   useEffect(() => {
     const q = query(collection(database, 'chats'), orderBy('createdAt', 'desc'));
     const unsubscribe = onSnapshot(q, snapshot => {
-      setMessages(snapshot.docs.map(doc => ({
-        _id: doc.data()._id,
-        createdAt: doc.data().createdAt.toDate(),
-        text: doc.data().text,
-        user: doc.data().user,
-      })));
+      const msgs = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          _id: data._id || doc.id,
+          createdAt: data.createdAt ? data.createdAt.toDate() : new Date(),
+          text: data.text || '',
+          user: data.user || { _id: 'unknown' },
+        };
+      });
+      setMessages(msgs);
     });
     return unsubscribe;
   }, []);
 
   const mensagemEnviada = useCallback((messages = []) => {
-    setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
-    const { _id, createdAt, text, user } = messages[0];
+    if (messages.length === 0) return;
+
+    const newMessage = messages[0];
+
+    setMessages(previousMessages => GiftedChat.append(previousMessages, [newMessage]));
+
+    const { _id, createdAt, text, user } = newMessage;
     addDoc(collection(database, "chats"), {
-      _id, createdAt, text, user,
+      _id,
+      createdAt,
+      text,
+      user,
     });
   }, []);
 
